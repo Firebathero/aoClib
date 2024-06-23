@@ -4,6 +4,8 @@ project(aoclib C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/aocutil)
 
@@ -24,3 +26,11 @@ target_include_directories(aoc_solve PRIVATE
 )
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
+
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(aoc_solve PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
+
+message(STATUS "Binary will be output to: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
