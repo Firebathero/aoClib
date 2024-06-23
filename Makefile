@@ -1,4 +1,4 @@
-.PHONY: all clean rebuild debug help valgrind perf
+.PHONY: all clean rebuild debug help valgrind
 
 BUILD_DIR := build
 BIN_DIR := bin
@@ -11,7 +11,7 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
-	rm -rf valgrind_output perf_output
+	rm -rf valgrind_output
 
 rebuild: clean all
 
@@ -34,5 +34,4 @@ help:
 	@echo "  rebuild       - Clean and rebuild"
 	@echo "  debug         - Build with debug symbols"
 	@echo "  valgrind      - Run Valgrind (use: make valgrind DAY=<number>)"
-	@echo "  perf          - Run perf (use: make perf DAY=<number>)"
 	@echo "  help          - Show this help message"
