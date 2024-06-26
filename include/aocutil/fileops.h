@@ -5,6 +5,10 @@
 
 #include <aocutil/compiler.h>
 
+#define FOREACH_LINE(buf, line) \
+    for (char *line = (buf), *next = NULL; line; line = next ? (next + 1) : NULL) \
+        if ((next = strchr(line, '\n')) ? (*next = '\0', 1) : 1)
+
 static FORCE_INLINE int file_to_buf(const char *file_name, char **buf) {
     FILE *file = fopen(file_name, "rb");
     if (!file) {
