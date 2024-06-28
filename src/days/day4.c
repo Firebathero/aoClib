@@ -13,9 +13,9 @@
 
 int cards[256] = {[0 ... 255] = 1};
 
-static FORCE_INLINE void processLine(char *line, int linenum) {
-    char *colonpos = strchr(line, ':');
-    char *pipepos = strchr(line, '|');
+static FORCE_INLINE void processLine(char *line, int linenum, size_t off_1, size_t off_2) {
+    char *colonpos = line + off_1;
+    char *pipepos = line + off_2;
     pan_string str = string_from_cstr(colonpos + 2);
     pan_string str2 = string_from_cstr(pipepos + 2);
     const char *delims = " ";
@@ -23,7 +23,7 @@ static FORCE_INLINE void processLine(char *line, int linenum) {
     uint64_t winning_cards[2] = {0, 0};
     int matches = 0;
 
-    for (it1 = token_begin(str, delims); !token_is_end(&it1); it1 = token_next(it1)) {
+    for (it1 = token_begin(str, delims); !token_is_end(&it1); it1 = token_next_digit(it1)) {
         pan_string card = token_value(&it1);
         if (card.data >= pipepos) break;
         if (!card.length || !isdigit(card.data[0]))
@@ -32,13 +32,12 @@ static FORCE_INLINE void processLine(char *line, int linenum) {
         winning_cards[num >> 6] |= 1ULL << (num & 63);
     }
 
-    for (it2 = token_begin(str2, delims); !token_is_end(&it2); it2 = token_next(it2)) {
+    for (it2 = token_begin(str2, delims); !token_is_end(&it2); it2 = token_next_digit(it2)) {
         pan_string card2 = token_value(&it2);
         if (!card2.length || !isdigit(card2.data[0]))
             continue;
         int num = fast_atoi(card2.data);
-        if (winning_cards[num >> 6] & (1ULL << (num & 63)))
-            matches++;
+        matches += (winning_cards[num >> 6] & (1ULL << (num & 63))) != 0;
     }
 
     int copies = cards[linenum];
@@ -61,11 +60,16 @@ int day4(const char* input_file) {
         return EXIT_FAILURE;
     }
 
+    char *first_line = buf;
+    size_t colon_offset = strchr(first_line, ':') - first_line;
+    size_t pipe_offset = strchr(first_line, '|') - first_line;
+
     int linenum = 0;
+
     FOREACH_LINE(buf, line) {
-        processLine(line, linenum);
-        linenum++;
-    }
+            processLine(line, linenum, colon_offset, pipe_offset);
+            linenum++;
+        }
 
     free(buf);
 

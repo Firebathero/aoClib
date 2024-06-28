@@ -26,6 +26,27 @@ static FORCE_INLINE TokenIterator token_next(TokenIterator it) {
     return it;
 }
 
+static FORCE_INLINE TokenIterator token_next_digit(TokenIterator it) {
+    while (it.current < it.end && *it.current == ' ')
+        it.current++;
+
+    const char* token_start = it.current;
+
+    if (isdigit(*it.current)) {
+        it.current++;
+        if (isdigit(*it.current))
+            it.current++;
+    }
+    else {
+        while (it.current < it.end && *it.current != ' ')
+            it.current++;
+    }
+
+    it.token = string_create(token_start, it.current - token_start);
+
+    return it;
+}
+
 static FORCE_INLINE TokenIterator token_begin(pan_string str, const char* delims) {
     TokenIterator it = {
             .current = str.data,
