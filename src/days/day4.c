@@ -9,6 +9,7 @@
 #include <aocutil/fileops.h>
 #include <aocutil/math.h>
 #include <aocutil/panstring.h>
+#include <stdint.h>
 
 int cards[256] = {[0 ... 255] = 1};
 
